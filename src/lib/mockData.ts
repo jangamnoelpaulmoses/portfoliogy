@@ -1,0 +1,148 @@
+import { PortfolioData } from './types';
+
+export const MOCK_PORTFOLIO_DATA: PortfolioData = {
+    name: 'Alex Chen',
+    title: 'Senior Full-Stack Engineer',
+    email: 'alex.chen@email.com',
+    phone: '+1-555-0123',
+    location: 'San Francisco, CA',
+    linkedin: 'linkedin.com/in/alexchen',
+    github: 'github.com/alexchen',
+    website: 'alexchen.dev',
+    headline: 'Building scalable systems that power millions of users worldwide',
+    bio: "I'm a passionate full-stack engineer with 6+ years of experience crafting elegant solutions to complex problems. I thrive at the intersection of performance engineering and beautiful user experiences, and I've had the privilege of building products used by millions.",
+    summary: 'Senior Full-Stack Engineer with 6+ years of experience building high-performance web applications. Specialized in React, Node.js, and cloud architecture. Proven track record of leading engineering teams and delivering products that scale.',
+    experience: [
+        {
+            company: 'TechCorp',
+            role: 'Senior Full-Stack Engineer',
+            location: 'San Francisco, CA',
+            startDate: 'Jan 2022',
+            endDate: 'Present',
+            highlights: [
+                'Led the architecture and development of a real-time analytics dashboard serving 2M+ daily active users',
+                'Reduced API response times by 65% through strategic caching and query optimization',
+                'Mentored a team of 5 junior engineers, establishing code review practices that reduced bug rates by 40%',
+                'Designed and implemented a microservices migration that improved system reliability to 99.97% uptime',
+            ],
+        },
+        {
+            company: 'StartupXYZ',
+            role: 'Full-Stack Developer',
+            location: 'Remote',
+            startDate: 'Mar 2019',
+            endDate: 'Dec 2021',
+            highlights: [
+                'Built the core product from scratch — a collaborative project management tool used by 500+ teams',
+                'Implemented real-time collaboration features using WebSockets, handling 10K+ concurrent connections',
+                'Developed a CI/CD pipeline that reduced deployment time from 45 minutes to 8 minutes',
+            ],
+        },
+        {
+            company: 'WebAgency',
+            role: 'Junior Developer',
+            location: 'New York, NY',
+            startDate: 'Jun 2017',
+            endDate: 'Feb 2019',
+            highlights: [
+                'Delivered 20+ client projects including e-commerce platforms and marketing sites',
+                'Introduced automated testing practices, increasing code coverage from 15% to 78%',
+            ],
+        },
+    ],
+    experienceNarrative: [
+        {
+            company: 'TechCorp',
+            role: 'Senior Full-Stack Engineer',
+            location: 'San Francisco, CA',
+            startDate: 'Jan 2022',
+            endDate: 'Present',
+            highlights: [
+                'Spearheaded the creation of a real-time analytics dashboard that now powers decision-making for over 2 million daily active users',
+                'Dramatically improved platform performance by reducing API response times by 65%, directly impacting user satisfaction scores',
+                'Cultivated engineering excellence by mentoring 5 junior developers and instituting code review standards that cut production bugs by 40%',
+                'Architected a seamless microservices migration that elevated system reliability to an impressive 99.97% uptime',
+            ],
+        },
+        {
+            company: 'StartupXYZ',
+            role: 'Full-Stack Developer',
+            location: 'Remote',
+            startDate: 'Mar 2019',
+            endDate: 'Dec 2021',
+            highlights: [
+                'Built the entire product from the ground up — a collaborative project management platform now trusted by 500+ teams worldwide',
+                'Engineered real-time collaboration capabilities using WebSockets, seamlessly handling 10,000+ simultaneous connections',
+                'Transformed deployment workflows by creating a CI/CD pipeline that slashed release times from 45 minutes to just 8',
+            ],
+        },
+        {
+            company: 'WebAgency',
+            role: 'Junior Developer',
+            location: 'New York, NY',
+            startDate: 'Jun 2017',
+            endDate: 'Feb 2019',
+            highlights: [
+                'Successfully delivered 20+ diverse client projects spanning e-commerce platforms and high-conversion marketing sites',
+                'Championed quality engineering by introducing automated testing, dramatically raising code coverage from 15% to 78%',
+            ],
+        },
+    ],
+    education: [
+        {
+            institution: 'University of California, Berkeley',
+            degree: 'Bachelor of Science',
+            field: 'Computer Science',
+            startDate: '2013',
+            endDate: '2017',
+            gpa: '3.8',
+        },
+    ],
+    skills: [
+        'React', 'Next.js', 'TypeScript', 'Node.js', 'Python',
+        'PostgreSQL', 'MongoDB', 'Redis', 'GraphQL', 'REST APIs',
+        'AWS', 'Docker', 'Kubernetes', 'CI/CD', 'Terraform',
+        'System Design', 'Agile/Scrum', 'Team Leadership',
+    ],
+    projects: [
+        {
+            name: 'DevFlow',
+            description: 'An open-source developer productivity tool that automates code review workflows and integrates with GitHub Actions.',
+            technologies: ['TypeScript', 'React', 'Node.js', 'GitHub API'],
+            link: 'https://github.com/alexchen/devflow',
+        },
+        {
+            name: 'CloudMetrics',
+            description: 'A lightweight cloud cost monitoring dashboard that helps teams track and optimize their AWS spending in real-time.',
+            technologies: ['Python', 'FastAPI', 'React', 'AWS SDK'],
+            link: 'https://cloudmetrics.dev',
+        },
+        {
+            name: 'MarkdownPro',
+            description: 'A beautiful, distraction-free Markdown editor with live preview, syntax highlighting, and cloud sync.',
+            technologies: ['Electron', 'React', 'CodeMirror', 'Firebase'],
+            link: 'https://github.com/alexchen/markdownpro',
+        },
+    ],
+    projectShowcase: [
+        {
+            name: 'DevFlow',
+            description: 'Frustrated by slow code review cycles, I built DevFlow — an open-source tool that automates review workflows and integrates seamlessly with GitHub Actions. It\'s now used by 200+ developers to speed up their merge-to-deploy pipeline.',
+            technologies: ['TypeScript', 'React', 'Node.js', 'GitHub API'],
+            link: 'https://github.com/alexchen/devflow',
+        },
+        {
+            name: 'CloudMetrics',
+            description: 'Cloud costs were eating into our startup\'s runway. CloudMetrics is a lightweight dashboard I built to give teams real-time visibility into their AWS spending, helping identify waste and optimize resources.',
+            technologies: ['Python', 'FastAPI', 'React', 'AWS SDK'],
+            link: 'https://cloudmetrics.dev',
+        },
+        {
+            name: 'MarkdownPro',
+            description: 'A passion project born from my love of clean writing tools. MarkdownPro is a beautiful, distraction-free editor with live preview, syntax highlighting, and seamless cloud sync across devices.',
+            technologies: ['Electron', 'React', 'CodeMirror', 'Firebase'],
+            link: 'https://github.com/alexchen/markdownpro',
+        },
+    ],
+    certifications: ['AWS Solutions Architect Professional', 'Google Cloud Professional Cloud Architect'],
+};
