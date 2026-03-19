@@ -48,8 +48,9 @@ export async function deployToVercel(
         });
     }
 
-    // Create deployment
-    const projectSlug = `portfolio-${portfolioName.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30)}`;
+    // Create deployment with a unique suffix so people with the same name don't overwrite each other's projects
+    const uniqueSuffix = crypto.randomBytes(3).toString('hex');
+    const projectSlug = `portfolio-${portfolioName.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30)}-${uniqueSuffix}`;
 
     const deployResponse = await fetch('https://api.vercel.com/v13/deployments', {
         method: 'POST',
@@ -78,30 +79,50 @@ export async function deployToVercel(
 
     // If a base custom domain is configured (e.g., noelpaulmoses.com), try to assign a subdomain
     if (baseDomain) {
-        const subdomain = portfolioName.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30);
-        const customDomain = `${subdomain}.${baseDomain}`;
+        const nameParts = portfolioName.trim().split(/\s+/);
+        const firstName = nameParts[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+        const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1].toLowerCase().replace(/[^a-z0-9]/g, '') : '';
 
-        try {
+        const tryAssignDomain = async (domain: string) => {
             const domainResponse = await fetch(`https://api.vercel.com/v10/projects/${projectSlug}/domains`, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: customDomain }),
+                body: JSON.stringify({ name: domain }),
             });
+            return { ok: domainResponse.ok, status: domainResponse.status, text: await domainResponse.text() };
+        };
 
-            if (domainResponse.ok) {
-                finalUrl = `https://${customDomain}`;
-            } else {
-                console.error(`Failed to assign custom domain ${customDomain}:`, await domainResponse.text());
-                // Fallback to the default deployment alias if assigning domain failed
-                if (deployment.alias && deployment.alias.length > 0) {
-                    finalUrl = `https://${deployment.alias[0]}`;
+        const domainsToTry = [];
+        if (firstName) domainsToTry.push(`${firstName}.${baseDomain}`);
+        if (firstName && lastName) domainsToTry.push(`${firstName}${lastName}.${baseDomain}`);
+
+        // Always add a random fallback option
+        const fallbackHash = crypto.randomBytes(2).toString('hex');
+        const fallbackBase = (firstName + lastName) || portfolioName.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 20);
+        domainsToTry.push(`${fallbackBase}-${fallbackHash}.${baseDomain}`);
+
+        let assignedDomain = null;
+        for (const dom of domainsToTry) {
+            try {
+                const res = await tryAssignDomain(dom);
+                if (res.ok) {
+                    assignedDomain = dom;
+                    break;
                 }
+                // Log and continue to fallback if it fails (e.g., 409 Conflict if name is taken)
+                console.warn(`Could not assign ${dom}:`, res.status, res.text);
+            } catch (err) {
+                console.error(`Error assigning ${dom}:`, err);
             }
-        } catch (err) {
-            console.error('Error assigning custom domain:', err);
+        }
+
+        if (assignedDomain) {
+            finalUrl = `https://${assignedDomain}`;
+        } else if (deployment.alias && deployment.alias.length > 0) {
+            finalUrl = `https://${deployment.alias[0]}`;
         }
     } else if (deployment.alias && deployment.alias.length > 0) {
         // If no custom domain, but Vercel generated a clean alias (e.g. project-name.vercel.app), use it!

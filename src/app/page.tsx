@@ -27,6 +27,7 @@ export default function Home() {
   const [steps, setSteps] = useState<ProcessingStep[]>(INITIAL_STEPS);
   const [previewHtml, setPreviewHtml] = useState("");
   const [portfolioId, setPortfolioId] = useState("");
+  const [parsedName, setParsedName] = useState("");
   const [deployedUrl, setDeployedUrl] = useState("");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
@@ -156,6 +157,7 @@ export default function Home() {
 
       setPreviewHtml(data.previewHtml);
       setPortfolioId(data.id);
+      setParsedName(data.parsedData?.name || "");
       setState("preview");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Something went wrong";
@@ -175,7 +177,7 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: portfolioId,
-          portfolioName: file?.name.replace(/\.pdf$/i, "") || "my-portfolio",
+          portfolioName: parsedName || file?.name.replace(/\.pdf$/i, "") || "my-portfolio",
         }),
       });
 
@@ -218,6 +220,7 @@ export default function Home() {
     setTextInput("");
     setPreviewHtml("");
     setPortfolioId("");
+    setParsedName("");
     setDeployedUrl("");
     setError("");
     setCopied(false);
