@@ -29,6 +29,7 @@ export default function Home() {
   const [portfolioId, setPortfolioId] = useState("");
   const [parsedName, setParsedName] = useState("");
   const [deployedUrl, setDeployedUrl] = useState("");
+  const [deployCountdown, setDeployCountdown] = useState(0);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -45,6 +46,17 @@ export default function Home() {
       }
     }
   }, [previewHtml, state]);
+
+  // Countdown timer for deployed URL
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (state === "deployed" && deployCountdown > 0) {
+      timer = setTimeout(() => {
+        setDeployCountdown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [state, deployCountdown]);
 
   const handleFileSelect = useCallback((selectedFile: File) => {
     if (selectedFile.type !== "application/pdf") {
@@ -189,6 +201,7 @@ export default function Home() {
 
       const data = await response.json();
       setDeployedUrl(data.url);
+      setDeployCountdown(6);
       setState("deployed");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Deployment failed";
@@ -223,6 +236,7 @@ export default function Home() {
     setPortfolioId("");
     setParsedName("");
     setDeployedUrl("");
+    setDeployCountdown(0);
     setError("");
     setCopied(false);
     setSteps(INITIAL_STEPS);
@@ -258,12 +272,20 @@ export default function Home() {
               <div className="info">
                 <div className="title">Portfolio deployed successfully!</div>
                 <div className="deployed-url">
-                  <a href={deployedUrl} target="_blank" rel="noopener noreferrer">
-                    {deployedUrl}
-                  </a>
-                  <button className={`copy-btn ${copied ? "copied" : ""}`} onClick={handleCopy}>
-                    {copied ? "Copied!" : "Copy"}
-                  </button>
+                  {deployCountdown > 0 ? (
+                    <span style={{ color: "var(--text-muted)", fontSize: "0.88rem" }}>
+                      Generating secure HTTPS certificates... Your link will be ready in {deployCountdown}s
+                    </span>
+                  ) : (
+                    <>
+                      <a href={deployedUrl} target="_blank" rel="noopener noreferrer">
+                        {deployedUrl}
+                      </a>
+                      <button className={`copy-btn ${copied ? "copied" : ""}`} onClick={handleCopy}>
+                        {copied ? "Copied!" : "Copy"}
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -298,7 +320,7 @@ export default function Home() {
                   )}
                 </button>
               )}
-              {state === "deployed" && deployedUrl && (
+              {state === "deployed" && deployedUrl && deployCountdown === 0 && (
                 <a
                   href={deployedUrl}
                   target="_blank"
