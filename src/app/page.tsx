@@ -12,10 +12,11 @@ interface ProcessingStep {
 }
 
 const INITIAL_STEPS: ProcessingStep[] = [
-  { id: "extract", label: "Extracting text from PDF...", icon: "📄", status: "pending" },
-  { id: "parse", label: "Parsing resume structure with AI...", icon: "🧠", status: "pending" },
-  { id: "rewrite", label: "Crafting portfolio content...", icon: "✍️", status: "pending" },
-  { id: "render", label: "Rendering your portfolio...", icon: "🎨", status: "pending" },
+  { id: "extract", label: "Extracting text from resume...", icon: "📄", status: "pending" },
+  { id: "parse", label: "Analyzing professional background...", icon: "🧠", status: "pending" },
+  { id: "rewrite", label: "Writing compelling marketing copy...", icon: "✍️", status: "pending" },
+  { id: "theme", label: "Applying premium design theme...", icon: "🎨", status: "pending" },
+  { id: "render", label: "Finalizing portfolio layout...", icon: "✨", status: "pending" },
 ];
 
 export default function Home() {
@@ -111,18 +112,18 @@ export default function Home() {
   };
 
   const simulateSteps = async () => {
-    const stepIds = ["extract", "parse", "rewrite", "render"];
-    for (let i = 0; i < stepIds.length; i++) {
+    // Delays match the heavy backend work: Extract (fast), Parse AI (slow), Rewrite AI (slow), Render (fast)
+    const delays = [1500, 6000, 7000, 2000, 2000];
+
+    for (let i = 0; i < INITIAL_STEPS.length; i++) {
       setSteps((prev) =>
         prev.map((s, idx) => ({
           ...s,
           status: idx < i ? "done" : idx === i ? "active" : "pending",
         }))
       );
-      // Wait a bit between steps for visual effect, but the real work
-      // is happening server-side and will finish when the fetch returns
-      if (i < stepIds.length - 1) {
-        await new Promise((r) => setTimeout(r, 800));
+      if (i < INITIAL_STEPS.length - 1) {
+        await new Promise((r) => setTimeout(r, delays[i]));
       }
     }
   };
