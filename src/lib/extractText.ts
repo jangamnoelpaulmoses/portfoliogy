@@ -1,6 +1,10 @@
 import { execFile } from 'child_process';
 import path from 'path';
 
+// This is a dummy import strictly to force Next.js / Vercel to trace this package
+// and include it in the Serverless Function bundle since the child process needs it
+import 'pdf-parse';
+
 export async function extractTextFromPDF(buffer: Buffer): Promise<string> {
     return new Promise((resolve, reject) => {
         // Hide the path from Turbopack static analysis by constructing it dynamically

@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["pdfjs-dist"],
+  serverExternalPackages: ["pdfjs-dist", "pdf-parse"],
+  outputFileTracingIncludes: {
+    '/api/generate': ['./scripts/**/*'],
+  },
 };
 
 export default nextConfig;
