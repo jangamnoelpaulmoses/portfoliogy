@@ -4,6 +4,10 @@
 
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+const pdfParse = require('pdf-parse');
 
 async function main() {
     // Read PDF buffer from stdin
@@ -18,38 +22,13 @@ async function main() {
         process.exit(1);
     }
 
-    // Import pdfjs-dist legacy build
-    const __dirname = dirname(fileURLToPath(import.meta.url));
-    const pdfjsPath = join(__dirname, '..', 'node_modules', 'pdfjs-dist', 'legacy', 'build', 'pdf.mjs');
-    const pdfjsLib = await import(pdfjsPath);
+    // Use pdf-parse to extract text
 
-    // Disable worker for server-side usage
-    pdfjsLib.GlobalWorkerOptions.workerSrc = '';
-
-    const loadingTask = pdfjsLib.getDocument({
-        data: new Uint8Array(buffer),
-        useWorkerFetch: false,
-        isEvalSupported: false,
-        useSystemFonts: true,
-        disableFontFace: true,
-    });
-
-    const pdf = await loadingTask.promise;
-    const textParts = [];
-
-    for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const textContent = await page.getTextContent();
-        const pageText = textContent.items
-            .map(item => item.str)
-            .join(' ');
-        textParts.push(pageText);
-    }
-
-    await pdf.destroy();
+    // We need to pass the buffer to pdfParse
+    const data = await pdfParse(buffer);
 
     // Output extracted text to stdout
-    process.stdout.write(textParts.join('\n'));
+    process.stdout.write(data.text);
 }
 
 main().catch(err => {
