@@ -178,6 +178,7 @@ export default function Home() {
         body: JSON.stringify({
           id: portfolioId,
           portfolioName: parsedName || file?.name.replace(/\.pdf$/i, "") || "my-portfolio",
+          html: previewHtml,
         }),
       });
 

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 import os from 'os';
-import { readFile, access } from 'fs/promises';
+import { access, mkdir, writeFile } from 'fs/promises';
 import { deployToVercel } from '@/lib/deployer';
 
 export async function POST(request: NextRequest) {
     try {
-        const { id, portfolioName } = await request.json();
+        const { id, portfolioName, html } = await request.json();
 
         if (!id) {
             return NextResponse.json(
@@ -22,16 +22,21 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Check that generated files exist
+        // Recreate directory and index.html if html is provided
         const outputDir = path.join(os.tmpdir(), 'portfoliogy', id);
 
-        try {
-            await access(outputDir);
-        } catch {
-            return NextResponse.json(
-                { error: 'Portfolio not found. Please generate it first.' },
-                { status: 404 }
-            );
+        if (html) {
+            await mkdir(outputDir, { recursive: true });
+            await writeFile(path.join(outputDir, 'index.html'), html);
+        } else {
+            try {
+                await access(outputDir);
+            } catch {
+                return NextResponse.json(
+                    { error: 'Portfolio not found. Please generate it first or pass html.' },
+                    { status: 404 }
+                );
+            }
         }
 
         // Deploy to Vercel
