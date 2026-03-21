@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 
-type AppState = "upload" | "processing" | "preview" | "deploying" | "deployed";
+type AppState = "upload" | "processing_parse" | "confirm_info" | "processing_generate" | "preview" | "deploying" | "deployed";
 
 interface ProcessingStep {
   id: string;
@@ -29,6 +29,9 @@ export default function Home() {
   const [previewHtml, setPreviewHtml] = useState("");
   const [portfolioId, setPortfolioId] = useState("");
   const [parsedName, setParsedName] = useState("");
+  const [parsedResumeData, setParsedResumeData] = useState<any>(null);
+  const [contactInfo, setContactInfo] = useState({ email: "", linkedin: "", github: "" });
+  const [useMockFlag, setUseMockFlag] = useState(false);
   const [deployedUrl, setDeployedUrl] = useState("");
   const [deployCountdown, setDeployCountdown] = useState(0);
   const [error, setError] = useState("");
@@ -111,26 +114,37 @@ export default function Home() {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  const simulateSteps = async () => {
-    // Delays match the heavy backend work: Extract (fast), Parse AI (slow), Rewrite AI (slow), Render (fast)
-    const delays = [1500, 6000, 7000, 2000, 2000];
-
-    for (let i = 0; i < INITIAL_STEPS.length; i++) {
+  const simulateParseSteps = async () => {
+    const delays = [1500, 4000];
+    for (let i = 0; i < 2; i++) {
       setSteps((prev) =>
         prev.map((s, idx) => ({
           ...s,
           status: idx < i ? "done" : idx === i ? "active" : "pending",
         }))
       );
-      if (i < INITIAL_STEPS.length - 1) {
-        await new Promise((r) => setTimeout(r, delays[i]));
+      await new Promise((r) => setTimeout(r, delays[i]));
+    }
+  };
+
+  const simulateGenerateSteps = async () => {
+    const delays = [6000, 2000, 2000];
+    for (let i = 2; i < 5; i++) {
+      setSteps((prev) =>
+        prev.map((s, idx) => ({
+          ...s,
+          status: idx < i ? "done" : idx === i ? "active" : s.status,
+        }))
+      );
+      if (i < 4) {
+        await new Promise((r) => setTimeout(r, delays[i - 2]));
       }
     }
   };
 
   const handleGenerate = async () => {
     setError("");
-    setState("processing");
+    setState("processing_parse");
     setSteps(INITIAL_STEPS);
 
     try {
@@ -141,20 +155,68 @@ export default function Home() {
         formData.append("rawText", textInput.trim());
       }
 
-      // If no OpenAI key is set, the backend falls back to mock mode
-      if (!file && !textInput.trim()) {
+      const isMock = (!file && !textInput.trim());
+      if (isMock) {
         formData.append("mock", "true");
       }
+      setUseMockFlag(isMock);
 
-      // Start step animation
-      const stepAnimation = simulateSteps();
+      const stepAnimation = simulateParseSteps();
 
-      const response = await fetch("/api/generate", {
+      const response = await fetch("/api/parse", {
         method: "POST",
         body: formData,
       });
 
-      // Wait for animation to at least play partially
+      await stepAnimation;
+
+      // Mark first two as done immediately
+      setSteps((prev) => prev.map((s, idx) => ({ ...s, status: idx <= 1 ? "done" : "pending" as const })));
+      await new Promise((r) => setTimeout(r, 500));
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Parsing failed");
+      }
+
+      const data = await response.json();
+
+      setParsedResumeData(data.parsedData);
+      setContactInfo({
+        email: data.parsedData?.email || "",
+        linkedin: data.parsedData?.linkedin || "",
+        github: data.parsedData?.github || "",
+      });
+      setState("confirm_info");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      setError(message);
+      setState("upload");
+      setSteps(INITIAL_STEPS);
+    }
+  };
+
+  const handleConfirmAndGenerate = async () => {
+    setError("");
+    setState("processing_generate");
+
+    try {
+      const updatedResumeData = {
+        ...parsedResumeData,
+        email: contactInfo.email,
+        linkedin: contactInfo.linkedin,
+        github: contactInfo.github,
+      };
+
+      const stepAnimation = simulateGenerateSteps();
+
+      // Ensure mock mode is handled
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ resumeData: updatedResumeData, mock: useMockFlag }),
+      });
+
       await stepAnimation;
 
       if (!response.ok) {
@@ -164,7 +226,6 @@ export default function Home() {
 
       const data = await response.json();
 
-      // Mark all steps as done
       setSteps((prev) => prev.map((s) => ({ ...s, status: "done" as const })));
       await new Promise((r) => setTimeout(r, 500));
 
@@ -175,8 +236,7 @@ export default function Home() {
     } catch (err) {
       const message = err instanceof Error ? err.message : "Something went wrong";
       setError(message);
-      setState("upload");
-      setSteps(INITIAL_STEPS);
+      setState("confirm_info");
     }
   };
 
@@ -241,6 +301,9 @@ export default function Home() {
     setError("");
     setCopied(false);
     setSteps(INITIAL_STEPS);
+    setParsedResumeData(null);
+    setUseMockFlag(false);
+    setContactInfo({ email: "", linkedin: "", github: "" });
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -474,7 +537,63 @@ export default function Home() {
             </>
           )}
 
-          {state === "processing" && (
+          {state === "confirm_info" && (
+            <div className="confirm-info-card" style={{ background: "var(--bg-card)", border: "1px solid var(--border)", padding: "32px", borderRadius: "16px", marginTop: "32px", textAlign: "left" }}>
+              <h2 style={{ marginBottom: "8px", fontSize: "1.5rem" }}>Confirm Contact Info</h2>
+              <p style={{ color: "var(--text-secondary)", marginBottom: "24px", fontSize: "0.95rem" }}>
+                We've extracted these links from your resume. Update them if needed so potential employers or clients can reach you.
+              </p>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginBottom: "32px" }}>
+                <div className="input-field">
+                  <label style={{ display: "block", marginBottom: "8px", fontSize: "0.9rem", color: "var(--text-secondary)" }}>Email address</label>
+                  <input
+                    type="email"
+                    value={contactInfo.email}
+                    onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
+                    style={{ width: "100%", padding: "12px", background: "var(--bg-primary)", border: "1px solid var(--border)", borderRadius: "8px", color: "var(--text-primary)", fontSize: "1rem" }}
+                  />
+                </div>
+                <div className="input-field">
+                  <label style={{ display: "block", marginBottom: "8px", fontSize: "0.9rem", color: "var(--text-secondary)" }}>LinkedIn URL</label>
+                  <input
+                    type="text"
+                    value={contactInfo.linkedin}
+                    onChange={(e) => setContactInfo({ ...contactInfo, linkedin: e.target.value })}
+                    style={{ width: "100%", padding: "12px", background: "var(--bg-primary)", border: "1px solid var(--border)", borderRadius: "8px", color: "var(--text-primary)", fontSize: "1rem" }}
+                  />
+                </div>
+                <div className="input-field">
+                  <label style={{ display: "block", marginBottom: "8px", fontSize: "0.9rem", color: "var(--text-secondary)" }}>GitHub URL <span style={{ color: "var(--text-muted)", fontSize: "0.8rem" }}>(Optional)</span></label>
+                  <input
+                    type="text"
+                    value={contactInfo.github}
+                    onChange={(e) => setContactInfo({ ...contactInfo, github: e.target.value })}
+                    style={{ width: "100%", padding: "12px", background: "var(--bg-primary)", border: "1px solid var(--border)", borderRadius: "8px", color: "var(--text-primary)", fontSize: "1rem" }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: "flex", gap: "12px" }}>
+                <button
+                  className="btn btn-secondary"
+                  onClick={handleStartOver}
+                  style={{ flex: 1, padding: "14px", fontSize: "1rem", justifyContent: "center" }}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-primary"
+                  onClick={handleConfirmAndGenerate}
+                  style={{ flex: 2, padding: "14px", fontSize: "1rem", justifyContent: "center" }}
+                >
+                  Confirm & Continue Portfolio Generation ✨
+                </button>
+              </div>
+            </div>
+          )}
+
+          {(state === "processing_parse" || state === "processing_generate") && (
             <div className="processing">
               <div className="processing-title">Building your portfolio...</div>
               <div className="processing-subtitle">This usually takes 15–30 seconds</div>

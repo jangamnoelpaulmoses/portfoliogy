@@ -13,10 +13,9 @@ export const maxDuration = 60; // Allow up to 60 seconds for AI processing
 
 export async function POST(request: NextRequest) {
     try {
-        const formData = await request.formData();
-        const file = formData.get('resume') as File | null;
-        const rawTextFromForm = formData.get('rawText') as string | null;
-        const useMock = formData.get('mock') === 'true';
+        const body = await request.json();
+        const { resumeData, mock } = body;
+        const useMock = mock === true;
 
         // Generate unique ID for this portfolio
         const id = uuidv4();
@@ -24,53 +23,19 @@ export async function POST(request: NextRequest) {
         let previewHtml;
 
         if (useMock || !process.env.OPENAI_API_KEY) {
-            // Mock mode — use sample data
-            portfolioData = MOCK_PORTFOLIO_DATA;
+            // Mock mode — use sample data but override with any edits from the frontend
+            portfolioData = {
+                ...MOCK_PORTFOLIO_DATA,
+                ...(resumeData || {})
+            };
             previewHtml = await renderPortfolio(portfolioData);
         } else {
-            // Real mode — process the uploaded PDF or raw text
-            if (!file && !rawTextFromForm) {
+            if (!resumeData) {
                 return NextResponse.json(
-                    { error: 'No resume file or text provided' },
+                    { error: 'No resume data provided' },
                     { status: 400 }
                 );
             }
-
-            let rawText = '';
-
-            if (file) {
-                // Validate file type
-                if (file.type !== 'application/pdf') {
-                    return NextResponse.json(
-                        { error: 'Please upload a PDF file' },
-                        { status: 400 }
-                    );
-                }
-
-                // Validate file size (max 10MB)
-                if (file.size > 10 * 1024 * 1024) {
-                    return NextResponse.json(
-                        { error: 'File size must be less than 10MB' },
-                        { status: 400 }
-                    );
-                }
-
-                // Step 1: Extract text from PDF
-                const buffer = Buffer.from(await file.arrayBuffer());
-                rawText = await extractTextFromPDF(buffer);
-            } else if (rawTextFromForm) {
-                rawText = rawTextFromForm;
-            }
-
-            if (!rawText || rawText.trim().length < 50) {
-                return NextResponse.json(
-                    { error: 'Could not extract enough text. Please provide more content.' },
-                    { status: 400 }
-                );
-            }
-
-            // Step 2: AI parse into structured data
-            const resumeData = await parseResumeWithAI(rawText);
 
             // Step 3: AI rewrite for portfolio
             portfolioData = await rewriteForPortfolio(resumeData);
