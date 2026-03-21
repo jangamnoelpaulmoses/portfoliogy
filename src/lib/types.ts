@@ -1,6 +1,7 @@
 export interface Experience {
   company: string;
   role: string;
+  description?: string;
   location?: string;
   startDate: string;
   endDate: string;

@@ -20,10 +20,10 @@ You MUST return valid JSON matching this schema:
   "headline": "A powerful, attention-grabbing one-liner (10-15 words)",
   "bio": "An engaging 2-3 sentence professional bio written in first person",
   "summary": "Enhanced professional summary (2-3 sentences, third person)",
-  "experience": [same structure as input but with improved, impactful highlight descriptions],
-  "experienceNarrative": [same as experience but with rewritten highlights that tell a story],
+  "experience": [same structure as input but with improved, impactful highlight descriptions and an added "description" field — a 1-2 sentence summary of the role],
+  "experienceNarrative": [same as experience but with rewritten highlights that tell a story and an engaging "description" for each role],
   "education": [keep as-is],
-  "skills": [keep as-is, but group/reorder by relevance],
+  "skills": [keep as plain strings (not objects), but group/reorder by relevance],
   "projects": [same structure but with enhanced descriptions],
   "projectShowcase": [same as projects but with compelling, detailed descriptions],
   "certifications": [keep as-is]

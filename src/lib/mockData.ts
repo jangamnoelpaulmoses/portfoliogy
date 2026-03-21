@@ -16,6 +16,7 @@ export const MOCK_PORTFOLIO_DATA: PortfolioData = {
         {
             company: 'TechCorp',
             role: 'Senior Full-Stack Engineer',
+            description: 'Leading architecture and development of customer-facing web applications, driving performance improvements, and mentoring engineering talent at a Series C enterprise SaaS company.',
             location: 'San Francisco, CA',
             startDate: 'Jan 2022',
             endDate: 'Present',
@@ -29,6 +30,7 @@ export const MOCK_PORTFOLIO_DATA: PortfolioData = {
         {
             company: 'StartupXYZ',
             role: 'Full-Stack Developer',
+            description: 'Built core product features from the ground up for a fast-growing startup, handling both frontend and backend development in a collaborative, remote-first environment.',
             location: 'Remote',
             startDate: 'Mar 2019',
             endDate: 'Dec 2021',
@@ -41,6 +43,7 @@ export const MOCK_PORTFOLIO_DATA: PortfolioData = {
         {
             company: 'WebAgency',
             role: 'Junior Developer',
+            description: 'Delivered diverse client projects across e-commerce and marketing, while establishing automated testing practices for a boutique web development agency.',
             location: 'New York, NY',
             startDate: 'Jun 2017',
             endDate: 'Feb 2019',
@@ -54,6 +57,7 @@ export const MOCK_PORTFOLIO_DATA: PortfolioData = {
         {
             company: 'TechCorp',
             role: 'Senior Full-Stack Engineer',
+            description: 'Leading architecture and development of customer-facing web applications, driving performance improvements, and mentoring engineering talent at a Series C enterprise SaaS company.',
             location: 'San Francisco, CA',
             startDate: 'Jan 2022',
             endDate: 'Present',
@@ -67,6 +71,7 @@ export const MOCK_PORTFOLIO_DATA: PortfolioData = {
         {
             company: 'StartupXYZ',
             role: 'Full-Stack Developer',
+            description: 'Built core product features from the ground up for a fast-growing startup, handling both frontend and backend development in a collaborative, remote-first environment.',
             location: 'Remote',
             startDate: 'Mar 2019',
             endDate: 'Dec 2021',
@@ -79,6 +84,7 @@ export const MOCK_PORTFOLIO_DATA: PortfolioData = {
         {
             company: 'WebAgency',
             role: 'Junior Developer',
+            description: 'Delivered diverse client projects across e-commerce and marketing, while establishing automated testing practices for a boutique web development agency.',
             location: 'New York, NY',
             startDate: 'Jun 2017',
             endDate: 'Feb 2019',

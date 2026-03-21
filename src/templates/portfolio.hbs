@@ -9,9 +9,56 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
     rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/framer-motion/10.12.16/framer-motion.js"></script>
+  <!-- Will use CSS animations instead for simplicity in static export -->
+
   <style>
+    :root {
+      /* Color palette — deep navy to violet gradient theme */
+      --bg-primary: #0a0a1a;
+      --bg-secondary: #111128;
+      --bg-tertiary: #1a1a3e;
+      --bg-card: rgba(20, 20, 50, 0.6);
+      --bg-glass: rgba(255, 255, 255, 0.03);
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.15);
+
+      --text-primary: #f0f0f8;
+      --text-secondary: #a0a0c0;
+      --text-muted: #6b6b8d;
+
+      --accent-primary: #7c3aed;
+      --accent-secondary: #a855f7;
+      --accent-tertiary: #c084fc;
+      --accent-glow: rgba(124, 58, 237, 0.25);
+      --accent-gradient: linear-gradient(135deg, #7c3aed, #a855f7, #c084fc);
+
+      --teal: #2dd4bf;
+      --teal-glow: rgba(45, 212, 191, 0.2);
+      --amber: #f59e0b;
+
+      /* Typography */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-display: 'Space Grotesk', 'Inter', sans-serif;
+
+      /* Spacing */
+      --section-padding: 120px 0;
+      --container-width: 1200px;
+
+      /* Transitions */
+      --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* Border radius */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+    }
+
     *,
     *::before,
     *::after {
@@ -20,97 +67,154 @@
       box-sizing: border-box;
     }
 
-    :root {
-      --bg-primary: #0a0a0f;
-      --bg-secondary: #12121a;
-      --bg-card: #1a1a2e;
-      --bg-card-hover: #22223a;
-      --accent: #6c5ce7;
-      --accent-light: #a29bfe;
-      --accent-glow: rgba(108, 92, 231, 0.3);
-      --text-primary: #f0f0f5;
-      --text-secondary: #a0a0b8;
-      --text-muted: #6b6b80;
-      --border: #2a2a3e;
-      --gradient-1: linear-gradient(135deg, #6c5ce7, #a29bfe);
-      --gradient-2: linear-gradient(135deg, #6c5ce7 0%, #e056a0 50%, #f7a844 100%);
-      --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
-      --shadow-glow: 0 0 40px var(--accent-glow);
-      --radius: 16px;
-      --radius-sm: 10px;
-      --max-width: 1100px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
     html {
       scroll-behavior: smooth;
+      scroll-padding-top: 80px;
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: var(--font-sans);
       background: var(--bg-primary);
       color: var(--text-primary);
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
     }
 
-    /* ===== NAV ===== */
-    nav {
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent-primary);
+      border-radius: 3px;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      z-index: 100;
-      padding: 16px 32px;
-      background: rgba(10, 10, 15, 0.85);
+      z-index: 1000;
+      padding: 16px 0;
+      transition: var(--transition-base);
+      background: rgba(10, 10, 26, 0.85);
       backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-glass);
+    }
+
+    .navbar-container {
+      max-width: var(--container-width);
+      margin: 0 auto;
+      padding: 0 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    nav .logo {
+    .navbar-logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
       font-weight: 700;
-      font-size: 1.15rem;
-      background: var(--gradient-1);
+      background: var(--accent-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      text-decoration: none;
+      letter-spacing: -0.5px;
     }
 
-    nav .nav-links {
+    .navbar-links {
       display: flex;
-      gap: 28px;
+      gap: 32px;
       list-style: none;
     }
 
-    nav .nav-links a {
+    .navbar-links a {
       color: var(--text-secondary);
       text-decoration: none;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       font-weight: 500;
-      transition: var(--transition);
+      transition: var(--transition-fast);
       position: relative;
     }
 
-    nav .nav-links a:hover {
-      color: var(--text-primary);
-    }
-
-    nav .nav-links a::after {
+    .navbar-links a::after {
       content: '';
       position: absolute;
       bottom: -4px;
       left: 0;
       width: 0;
       height: 2px;
-      background: var(--gradient-1);
-      transition: width 0.3s ease;
+      background: var(--accent-gradient);
+      transition: var(--transition-base);
     }
 
-    nav .nav-links a:hover::after {
+    .navbar-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .navbar-links a:hover::after {
       width: 100%;
+    }
+
+    /* ===== SECTION COMMON ===== */
+    .section {
+      padding: var(--section-padding);
+      position: relative;
+    }
+
+    .container {
+      max-width: var(--container-width);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-label {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--accent-secondary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--accent-gradient);
+      border-radius: 1px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+      line-height: 1.2;
+    }
+
+    .section-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      line-height: 1.7;
     }
 
     /* ===== HERO ===== */
@@ -120,193 +224,213 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 120px 32px 80px;
       position: relative;
       overflow: hidden;
+      padding-top: 80px;
     }
 
-    .hero::before {
-      content: '';
+    .hero-bg-gradient {
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(ellipse at 30% 50%, rgba(108, 92, 231, 0.08) 0%, transparent 60%),
-        radial-gradient(ellipse at 70% 50%, rgba(224, 86, 160, 0.05) 0%, transparent 60%);
-      animation: heroGlow 15s ease-in-out infinite alternate;
+      top: -30%;
+      right: -20%;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
 
-    @keyframes heroGlow {
-      0% {
-        transform: translate(0, 0) rotate(0deg);
-      }
-
-      100% {
-        transform: translate(-3%, 3%) rotate(3deg);
-      }
+    .hero-bg-gradient-2 {
+      position: absolute;
+      bottom: -20%;
+      left: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--teal-glow), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
 
-    .hero-content {
+    .hero-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 24px;
       position: relative;
       z-index: 1;
-      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
     }
 
     .hero-badge {
-      display: inline-block;
-      padding: 6px 18px;
-      border: 1px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
       border-radius: 100px;
-      font-size: 0.82rem;
-      color: var(--accent-light);
-      margin-bottom: 28px;
-      background: rgba(108, 92, 231, 0.08);
+      font-size: 0.85rem;
+      color: var(--teal);
+      font-weight: 500;
     }
 
-    .hero h1 {
-      font-size: clamp(2rem, 8vw, 4rem);
-      font-weight: 700;
-      line-height: 1.15;
-      margin-bottom: 20px;
+    .hero-badge-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--teal);
+      border-radius: 50%;
+      animation: pulse-dot 2s ease-in-out infinite;
     }
 
-    .hero h1 .gradient-text {
-      background: var(--gradient-2);
+    @keyframes pulse-dot {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+      }
+    }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -2px;
+    }
+
+    .hero-name-gradient {
+      background: var(--accent-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .hero .headline {
-      font-size: 1.2rem;
+    .hero-title {
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
       color: var(--text-secondary);
-      margin-bottom: 36px;
-      max-width: 560px;
-      margin-left: auto;
-      margin-right: auto;
+      font-weight: 400;
+      line-height: 1.6;
+      max-width: 700px;
+      margin: 0 auto;
     }
 
-    .hero .cta-group {
+    .hero-cta-group {
       display: flex;
       gap: 16px;
+      padding-top: 16px;
       justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 28px;
-      border-radius: var(--radius-sm);
-      font-size: 0.92rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: var(--transition);
-      cursor: pointer;
-      border: none;
     }
 
     .btn-primary {
-      background: var(--gradient-1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: var(--accent-gradient);
       color: white;
-      box-shadow: 0 4px 20px var(--accent-glow);
+      border: none;
+      border-radius: 100px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition-base);
     }
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: var(--shadow-glow);
+      box-shadow: 0 8px 30px var(--accent-glow);
     }
 
     .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
       background: transparent;
       color: var(--text-primary);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-glass);
+      border-radius: 100px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition-base);
+      text-decoration: none;
     }
 
     .btn-secondary:hover {
-      border-color: var(--accent);
-      background: rgba(108, 92, 231, 0.08);
-    }
-
-    /* ===== SECTIONS ===== */
-    section {
-      padding: 100px 32px;
-    }
-
-    .container {
-      max-width: var(--max-width);
-      margin: 0 auto;
-    }
-
-    .section-label {
-      font-size: 0.82rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      color: var(--accent-light);
-      margin-bottom: 12px;
-    }
-
-    .section-title {
-      font-size: clamp(1.8rem, 3vw, 2.5rem);
-      font-weight: 700;
-      margin-bottom: 48px;
+      border-color: var(--accent-secondary);
+      background: var(--bg-glass);
+      transform: translateY(-2px);
     }
 
     /* ===== ABOUT ===== */
-    .about-content {
+    .about-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 48px;
-      align-items: start;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      margin-top: 48px;
+    }
+
+    .about-text h3 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 20px;
     }
 
     .about-text p {
       color: var(--text-secondary);
+      margin-bottom: 16px;
       font-size: 1.05rem;
-      margin-bottom: 24px;
+      line-height: 1.8;
     }
 
-    .about-details {
+    .about-highlights {
       display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 16px;
+      margin-top: 32px;
     }
 
-    .detail-card {
-      padding: 20px 24px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      transition: var(--transition);
+    .about-highlight-card {
+      padding: 20px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      transition: var(--transition-base);
     }
 
-    .detail-card:hover {
-      border-color: var(--accent);
-      background: var(--bg-card-hover);
+    .about-highlight-card:hover {
+      border-color: var(--border-hover);
+      background: rgba(255, 255, 255, 0.05);
     }
 
-    .detail-card .label {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--text-muted);
+    .about-highlight-card h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
       margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .detail-card .value {
-      font-weight: 500;
-      color: var(--text-primary);
+    .about-highlight-card .icon {
+      color: var(--accent-secondary);
     }
 
-    .detail-card .value a {
-      color: var(--accent-light);
-      text-decoration: none;
-    }
-
-    .detail-card .value a:hover {
-      text-decoration: underline;
+    .about-highlight-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0;
     }
 
     /* ===== EXPERIENCE ===== */
@@ -314,161 +438,157 @@
       background: var(--bg-secondary);
     }
 
-    .timeline {
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
-    }
-
-    .timeline-item {
-      padding: 32px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      transition: var(--transition);
+    .experience-timeline {
+      margin-top: 48px;
       position: relative;
     }
 
-    .timeline-item:hover {
-      border-color: var(--accent);
-      box-shadow: var(--shadow-card);
-      transform: translateY(-2px);
-    }
-
-    .timeline-item::before {
+    .experience-timeline::before {
       content: '';
       position: absolute;
-      top: 0;
       left: 0;
-      width: 3px;
-      height: 100%;
-      background: var(--gradient-1);
-      border-radius: 3px 0 0 3px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--accent-primary), var(--teal), transparent);
     }
 
-    .timeline-item:hover::before {
-      opacity: 1;
+    .experience-item {
+      padding-left: 48px;
+      margin-bottom: 48px;
+      position: relative;
     }
 
-    .timeline-header {
+    .experience-item::before {
+      content: '';
+      position: absolute;
+      left: -5px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      border: 3px solid var(--bg-secondary);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .experience-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      transition: var(--transition-base);
+    }
+
+    .experience-card:hover {
+      border-color: var(--border-hover);
+      transform: translateX(4px);
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .experience-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 6px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 12px;
     }
 
-    .timeline-role {
-      font-size: 1.15rem;
-      font-weight: 600;
+    .experience-role {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
     }
 
-    .timeline-date {
+    .experience-company {
+      font-size: 1rem;
+      color: var(--accent-tertiary);
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    .experience-meta {
+      text-align: right;
+    }
+
+    .experience-date {
       font-size: 0.85rem;
       color: var(--text-muted);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .timeline-company {
-      color: var(--accent-light);
       font-weight: 500;
-      margin-bottom: 16px;
-      font-size: 0.95rem;
     }
 
-    .timeline-highlights {
+    .experience-bullets {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .timeline-highlights li {
-      position: relative;
-      padding-left: 20px;
+    .experience-bullets li {
+      font-size: 0.95rem;
       color: var(--text-secondary);
-      font-size: 0.92rem;
+      line-height: 1.7;
+      padding-left: 20px;
+      position: relative;
     }
 
-    .timeline-highlights li::before {
+    .experience-bullets li::before {
       content: '▸';
       position: absolute;
       left: 0;
-      color: var(--accent);
+      color: var(--accent-secondary);
+      font-weight: 600;
     }
 
     /* ===== PROJECTS ===== */
     .projects-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 24px;
+      margin-top: 48px;
     }
 
     .project-card {
       padding: 32px;
       background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      transition: var(--transition);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      transition: var(--transition-base);
       display: flex;
       flex-direction: column;
     }
 
     .project-card:hover {
-      border-color: var(--accent);
+      border-color: var(--accent-secondary);
       transform: translateY(-4px);
-      box-shadow: var(--shadow-card);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
     }
 
     .project-icon {
       width: 44px;
       height: 44px;
-      background: rgba(108, 92, 231, 0.12);
-      border-radius: 12px;
+      background: rgba(124, 58, 237, 0.15);
+      border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
+      color: var(--accent-secondary);
+      margin-bottom: 20px;
+    }
+
+    .project-title {
+      font-family: var(--font-display);
       font-size: 1.2rem;
-      margin-bottom: 20px;
-    }
-
-    .project-name {
-      font-size: 1.15rem;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
 
-    .project-name a {
-      color: var(--text-primary);
-      text-decoration: none;
-    }
-
-    .project-name a:hover {
-      color: var(--accent-light);
-    }
-
-    .project-name .arrow {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      transition: var(--transition);
-    }
-
-    .project-card:hover .arrow {
-      color: var(--accent-light);
-      transform: translate(3px, -3px);
-    }
-
-    .project-desc {
+    .project-description {
       color: var(--text-secondary);
-      font-size: 0.92rem;
-      margin-bottom: 20px;
-      flex: 1;
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+      flex-grow: 1;
     }
 
     .project-tech {
@@ -477,14 +597,13 @@
       gap: 8px;
     }
 
-    .tech-tag {
+    .project-tech-tag {
       padding: 4px 12px;
-      background: rgba(108, 92, 231, 0.1);
-      border: 1px solid rgba(108, 92, 231, 0.2);
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
       border-radius: 100px;
-      font-size: 0.78rem;
-      color: var(--accent-light);
-      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
     }
 
     /* ===== SKILLS ===== */
@@ -492,77 +611,33 @@
       background: var(--bg-secondary);
     }
 
-    .skills-cloud {
+    .skills-grid {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
+      margin-top: 48px;
     }
 
-    .skill-item {
-      padding: 10px 22px;
+    .skill-tag-lg {
+      padding: 12px 24px;
       background: var(--bg-card);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-glass);
       border-radius: var(--radius-sm);
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: 500;
       color: var(--text-primary);
-      transition: var(--transition);
+      transition: var(--transition-base);
     }
 
-    .skill-item:hover {
-      border-color: var(--accent);
-      background: var(--bg-card-hover);
+    .skill-tag-lg:hover {
+      border-color: var(--teal);
+      background: var(--teal-glow);
       transform: translateY(-2px);
     }
 
-    /* ===== EDUCATION ===== */
-    .education-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
-    }
-
-    .education-card {
-      padding: 32px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      transition: var(--transition);
-    }
-
-    .education-card:hover {
-      border-color: var(--accent);
-    }
-
-    .education-degree {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .education-school {
-      color: var(--accent-light);
-      font-weight: 500;
-      margin-bottom: 8px;
-    }
-
-    .education-meta {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
     /* ===== CONTACT ===== */
-    #contact {
-      background: var(--bg-secondary);
+    .contact-section {
       text-align: center;
-    }
-
-    .contact-text {
-      color: var(--text-secondary);
-      font-size: 1.1rem;
-      max-width: 500px;
-      margin: 0 auto 36px;
     }
 
     .contact-links {
@@ -570,6 +645,7 @@
       justify-content: center;
       gap: 16px;
       flex-wrap: wrap;
+      margin-top: 48px;
     }
 
     .contact-link {
@@ -578,263 +654,261 @@
       gap: 8px;
       padding: 14px 24px;
       background: var(--bg-card);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-glass);
       border-radius: var(--radius-sm);
       color: var(--text-primary);
       text-decoration: none;
       font-weight: 500;
       font-size: 0.9rem;
-      transition: var(--transition);
+      transition: var(--transition-base);
     }
 
     .contact-link:hover {
-      border-color: var(--accent);
-      background: var(--bg-card-hover);
+      border-color: var(--accent-secondary);
+      background: rgba(255, 255, 255, 0.05);
       transform: translateY(-2px);
     }
 
-    /* ===== FOOTER ===== */
     footer {
       padding: 32px;
       text-align: center;
       color: var(--text-muted);
-      font-size: 0.82rem;
-      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border-glass);
+      background: var(--bg-primary);
     }
 
-    footer .brand {
-      color: var(--accent-light);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
-      nav {
-        padding: 14px 20px;
-        flex-direction: column;
-        gap: 12px;
+      .navbar-links {
+        display: none;
       }
 
-      nav .nav-links {
-        gap: 12px;
-        flex-wrap: wrap;
-        justify-content: center;
+      .section {
+        padding: 80px 0;
       }
 
-      nav .nav-links a {
-        font-size: 0.85rem;
+      .hero-container {
+        padding-top: 40px;
       }
 
-      section {
-        padding: 64px 20px;
+      .hero-name {
+        font-size: 3rem;
       }
 
-      .about-content {
-        grid-template-columns: 1fr;
-        gap: 32px;
+      .experience-item {
+        padding-left: 24px;
       }
 
-      .hero {
-        padding: 120px 20px 60px;
-      }
-
-      .timeline-header {
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .hero .cta-group {
-        flex-direction: column;
-        width: 100%;
-      }
-
-      .btn {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .contact-links {
-        flex-direction: column;
-        width: 100%;
-      }
-
-      .contact-link {
-        justify-content: center;
+      .experience-card {
+        padding: 20px;
       }
     }
 
-    /* ===== ANIMATIONS ===== */
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
+    /* Simple Intro Animations */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUpAnim 0.8s forwards cubic-bezier(0.22, 1, 0.36, 1);
+    }
 
+    .delay-1 {
+      animation-delay: 0.1s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.2s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes fadeUpAnim {
       to {
         opacity: 1;
         transform: translateY(0);
       }
-    }
-
-    .animate {
-      opacity: 0;
-      animation: fadeUp 0.6s ease forwards;
-    }
-
-    .animate-delay-1 {
-      animation-delay: 0.1s;
-    }
-
-    .animate-delay-2 {
-      animation-delay: 0.2s;
-    }
-
-    .animate-delay-3 {
-      animation-delay: 0.3s;
-    }
-
-    .animate-delay-4 {
-      animation-delay: 0.4s;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- NAV -->
-  <nav>
-    <div class="logo">{{name}}</div>
-    <ul class="nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#experience">Experience</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#skills">Skills</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="#" class="navbar-logo">{{#if parsedData.name}}{{parsedData.name}}{{else}}Portfolio{{/if}}</a>
+      <ul class="navbar-links">
+        <li><a href="#about">About</a></li>
+        {{#if experienceNarrative.length}}<li><a href="#experience">Experience</a></li>{{/if}}
+        {{#if projects.length}}<li><a href="#projects">Projects</a></li>{{/if}}
+        {{#if skills.length}}<li><a href="#skills">Skills</a></li>{{/if}}
+      </ul>
+    </div>
   </nav>
 
   <!-- HERO -->
-  <section class="hero">
-    <div class="hero-content">
-      <div class="hero-badge animate">{{title}}</div>
-      <h1 class="animate animate-delay-1">
-        Hi, I'm <span class="gradient-text">{{name}}</span>
+  <section class="hero" id="hero">
+    <div class="hero-bg-gradient"></div>
+    <div class="hero-bg-gradient-2"></div>
+
+    <div class="hero-container">
+      <div class="hero-badge fade-up">
+        <span class="hero-badge-dot"></span>
+        {{title}}
+      </div>
+
+      <h1 class="hero-name fade-up delay-1">
+        Hi, I'm <br /><span class="hero-name-gradient">{{name}}</span>
       </h1>
-      <p class="headline animate animate-delay-2">{{headline}}</p>
-      <div class="cta-group animate animate-delay-3">
-        {{#if email}}
-        <a href="mailto:{{email}}" class="btn btn-primary">
-          ✉ Get in Touch
+
+      <p class="hero-title fade-up delay-2">
+        {{headline}}
+      </p>
+
+      <div class="hero-cta-group fade-up delay-3">
+        <a href="#contact" class="btn-primary">
+          Get In Touch <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
         </a>
-        {{/if}}
-        {{#if github}}
-        <a href="https://{{github}}" target="_blank" rel="noopener" class="btn btn-secondary">
-          ⌘ GitHub
+        <a href="#about" class="btn-secondary">
+          View My Work
         </a>
-        {{/if}}
       </div>
     </div>
   </section>
 
   <!-- ABOUT -->
-  <section id="about">
+  <section class="section" id="about">
     <div class="container">
       <div class="section-label">About</div>
-      <h2 class="section-title">Who I Am</h2>
-      <div class="about-content">
+      <h2 class="section-title">Turning complex problems into <br />scalable solutions</h2>
+      <div class="about-grid">
         <div class="about-text">
           <p>{{bio}}</p>
           <p>{{summary}}</p>
-        </div>
-        <div class="about-details">
-          {{#if location}}
-          <div class="detail-card">
-            <div class="label">Location</div>
-            <div class="value">📍 {{location}}</div>
-          </div>
-          {{/if}}
-          {{#if email}}
-          <div class="detail-card">
-            <div class="label">Email</div>
-            <div class="value"><a href="mailto:{{email}}">{{email}}</a></div>
-          </div>
-          {{/if}}
-          {{#if linkedin}}
-          <div class="detail-card">
-            <div class="label">LinkedIn</div>
-            <div class="value"><a href="https://{{linkedin}}" target="_blank" rel="noopener">{{linkedin}}</a></div>
-          </div>
-          {{/if}}
-          {{#if website}}
-          <div class="detail-card">
-            <div class="label">Website</div>
-            <div class="value"><a href="https://{{website}}" target="_blank" rel="noopener">{{website}}</a></div>
-          </div>
-          {{/if}}
-          {{#if certifications.length}}
-          <div class="detail-card">
-            <div class="label">Certifications</div>
-            <div class="value">
-              {{#each certifications}}
-              {{this}}{{#unless @last}}, {{/unless}}
-              {{/each}}
+
+          <div class="about-highlights">
+            {{#if location}}
+            <div class="about-highlight-card">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                <path
+                  d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <h4>Location</h4>
+              <p>{{location}}</p>
             </div>
+            {{/if}}
+            {{#if email}}
+            <div class="about-highlight-card">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                <rect width="20" height="16" x="2" y="4" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+              </svg>
+              <h4>Email</h4>
+              <p>{{email}}</p>
+            </div>
+            {{/if}}
+            {{#if linkedin}}
+            <div class="about-highlight-card">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                <rect width="4" height="12" x="2" y="9" />
+                <circle cx="4" cy="4" r="2" />
+              </svg>
+              <h4>LinkedIn</h4>
+              <p><a href="https://{{linkedin}}" target="_blank"
+                  style="color:var(--text-muted);text-decoration:none;">{{linkedin}}</a></p>
+            </div>
+            {{/if}}
+            {{#if github}}
+            <div class="about-highlight-card">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                <path
+                  d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+                <path d="M9 18c-4.51 2-5-2-7-2" />
+              </svg>
+              <h4>GitHub</h4>
+              <p><a href="https://{{github}}" target="_blank"
+                  style="color:var(--text-muted);text-decoration:none;">{{github}}</a></p>
+            </div>
+            {{/if}}
           </div>
-          {{/if}}
         </div>
       </div>
     </div>
   </section>
 
   <!-- EXPERIENCE -->
-  <section id="experience">
+  {{#if experienceNarrative.length}}
+  <section class="section" id="experience">
     <div class="container">
       <div class="section-label">Experience</div>
-      <h2 class="section-title">Where I've Worked</h2>
-      <div class="timeline">
+      <h2 class="section-title">Where I've made an impact</h2>
+
+      <div class="experience-timeline">
         {{#each experienceNarrative}}
-        <div class="timeline-item">
-          <div class="timeline-header">
-            <div class="timeline-role">{{this.role}}</div>
-            <div class="timeline-date">{{this.startDate}} — {{this.endDate}}</div>
+        <div class="experience-item">
+          <div class="experience-card">
+            <div class="experience-header">
+              <div>
+                <div class="experience-role">{{this.role}}</div>
+                <div class="experience-company">{{this.company}}</div>
+              </div>
+              <div class="experience-meta">
+                <div class="experience-date">{{this.startDate}} — {{this.endDate}}</div>
+              </div>
+            </div>
+            {{#if this.description}}
+            <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7; margin-bottom: 16px;">
+              {{this.description}}</p>
+            {{/if}}
+            <ul class="experience-bullets">
+              {{#each this.highlights}}
+              <li>{{this}}</li>
+              {{/each}}
+            </ul>
           </div>
-          <div class="timeline-company">{{this.company}}{{#if this.location}} · {{this.location}}{{/if}}</div>
-          <ul class="timeline-highlights">
-            {{#each this.highlights}}
-            <li>{{this}}</li>
-            {{/each}}
-          </ul>
         </div>
         {{/each}}
       </div>
     </div>
   </section>
+  {{/if}}
 
   <!-- PROJECTS -->
-  {{#if projectShowcase.length}}
-  <section id="projects">
+  {{#if projects.length}}
+  <section class="section" id="projects">
     <div class="container">
       <div class="section-label">Projects</div>
-      <h2 class="section-title">What I've Built</h2>
+      <h2 class="section-title">Things I've built</h2>
+
       <div class="projects-grid">
-        {{#each projectShowcase}}
+        {{#each projects}}
         <div class="project-card">
-          <div class="project-icon">🚀</div>
-          <div class="project-name">
-            {{#if this.link}}
-            <a href="{{this.link}}" target="_blank" rel="noopener">{{this.name}}</a>
-            <span class="arrow">↗</span>
-            {{else}}
-            {{this.name}}
-            {{/if}}
+          <div class="project-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
+            </svg>
           </div>
-          <p class="project-desc">{{this.description}}</p>
+          <div class="project-title">{{this.title}}</div>
+          <div class="project-description">{{this.description}}</div>
+          {{#if this.technologies}}
           <div class="project-tech">
             {{#each this.technologies}}
-            <span class="tech-tag">{{this}}</span>
+            <span class="project-tech-tag">{{this}}</span>
             {{/each}}
           </div>
+          {{/if}}
         </div>
         {{/each}}
       </div>
@@ -843,34 +917,14 @@
   {{/if}}
 
   <!-- SKILLS -->
-  <section id="skills">
+  {{#if skills.length}}
+  <section class="section" id="skills">
     <div class="container">
       <div class="section-label">Skills</div>
-      <h2 class="section-title">Technologies & Tools</h2>
-      <div class="skills-cloud">
+      <h2 class="section-title">My technical toolkit</h2>
+      <div class="skills-grid">
         {{#each skills}}
-        <div class="skill-item">{{this}}</div>
-        {{/each}}
-      </div>
-    </div>
-  </section>
-
-  <!-- EDUCATION -->
-  {{#if education.length}}
-  <section id="education">
-    <div class="container">
-      <div class="section-label">Education</div>
-      <h2 class="section-title">Academic Background</h2>
-      <div class="education-grid">
-        {{#each education}}
-        <div class="education-card">
-          <div class="education-degree">{{this.degree}}{{#if this.field}} in {{this.field}}{{/if}}</div>
-          <div class="education-school">{{this.institution}}</div>
-          <div class="education-meta">
-            {{#if this.startDate}}{{this.startDate}} — {{/if}}{{this.endDate}}
-            {{#if this.gpa}} · GPA: {{this.gpa}}{{/if}}
-          </div>
-        </div>
+        <span class="skill-tag-lg">{{#if this.name}}{{this.name}}{{else}}{{this}}{{/if}}</span>
         {{/each}}
       </div>
     </div>
@@ -878,54 +932,54 @@
   {{/if}}
 
   <!-- CONTACT -->
-  <section id="contact">
+  <section class="section contact-section" id="contact">
     <div class="container">
-      <div class="section-label">Contact</div>
-      <h2 class="section-title">Let's Connect</h2>
-      <p class="contact-text">I'm always open to discussing new opportunities, interesting projects, or just having a
-        great conversation.</p>
+      <div class="section-label" style="justify-content:center;">Contact</div>
+      <h2 class="section-title">Let's connect</h2>
+      <p class="section-subtitle" style="margin: 0 auto;">I'm always open to new opportunities, collaborations, or just
+        a friendly chat about tech.</p>
+
       <div class="contact-links">
         {{#if email}}
-        <a href="mailto:{{email}}" class="contact-link">✉ {{email}}</a>
+        <a href="mailto:{{email}}" class="contact-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="16" x="2" y="4" rx="2" />
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+          </svg> {{email}}
+        </a>
         {{/if}}
         {{#if linkedin}}
-        <a href="https://{{linkedin}}" target="_blank" rel="noopener" class="contact-link">🔗 LinkedIn</a>
+        <a href="https://{{linkedin}}" target="_blank" class="contact-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+            <rect width="4" height="12" x="2" y="9" />
+            <circle cx="4" cy="4" r="2" />
+          </svg> LinkedIn
+        </a>
         {{/if}}
         {{#if github}}
-        <a href="https://{{github}}" target="_blank" rel="noopener" class="contact-link">⌘ GitHub</a>
-        {{/if}}
-        {{#if website}}
-        <a href="https://{{website}}" target="_blank" rel="noopener" class="contact-link">🌐 Website</a>
+        <a href="https://{{github}}" target="_blank" class="contact-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+            <path d="M9 18c-4.51 2-5-2-7-2" />
+          </svg> GitHub
+        </a>
         {{/if}}
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer>
-    <p>Built with <a href="#" class="brand">Portfoliogy</a> · {{name}} © 2025</p>
+    <div class="container">
+      <p>© 2026 {{name}}. <a href="#" style="color:var(--text-muted);text-decoration:none;">Generated with
+          Portfoliogy</a></p>
+    </div>
   </footer>
 
-  <!-- Scroll Animation Script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-          }
-        });
-      }, { threshold: 0.1 });
-
-      document.querySelectorAll('.timeline-item, .project-card, .skill-item, .education-card, .detail-card').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-        observer.observe(el);
-      });
-    });
-  </script>
 </body>
 
 </html>

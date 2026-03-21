@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import { ResumeData } from './types';
 
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 const SYSTEM_PROMPT = `You are an expert resume parser. Given raw text extracted from a resume PDF, parse it into a structured JSON format.
@@ -22,6 +22,7 @@ You MUST return valid JSON matching this exact schema:
     {
       "company": "Company Name",
       "role": "Job Title",
+      "description": "Brief summary of the role and responsibilities",
       "location": "City, State",
       "startDate": "Mon YYYY",
       "endDate": "Mon YYYY or Present",
@@ -58,29 +59,29 @@ Rules:
 - Return ONLY the JSON, no markdown fences or extra text`;
 
 export async function parseResumeWithAI(rawText: string): Promise<ResumeData> {
-    if (!process.env.OPENAI_API_KEY) {
-        throw new Error('OPENAI_API_KEY is not configured');
-    }
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY is not configured');
+  }
 
-    const response = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [
-            { role: 'system', content: SYSTEM_PROMPT },
-            { role: 'user', content: `Parse this resume:\n\n${rawText}` },
-        ],
-        temperature: 0.1,
-        response_format: { type: 'json_object' },
-    });
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o',
+    messages: [
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: `Parse this resume:\n\n${rawText}` },
+    ],
+    temperature: 0.1,
+    response_format: { type: 'json_object' },
+  });
 
-    const content = response.choices[0]?.message?.content;
-    if (!content) {
-        throw new Error('AI returned empty response');
-    }
+  const content = response.choices[0]?.message?.content;
+  if (!content) {
+    throw new Error('AI returned empty response');
+  }
 
-    try {
-        const parsed = JSON.parse(content) as ResumeData;
-        return parsed;
-    } catch {
-        throw new Error('AI returned invalid JSON');
-    }
+  try {
+    const parsed = JSON.parse(content) as ResumeData;
+    return parsed;
+  } catch {
+    throw new Error('AI returned invalid JSON');
+  }
 }

@@ -19,7 +19,7 @@
 
 # production
 /build
-
+/inspiration
 # misc
 .DS_Store
 *.pem
