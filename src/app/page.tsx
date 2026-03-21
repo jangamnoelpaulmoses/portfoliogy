@@ -337,8 +337,8 @@ export default function Home() {
                 <div className="title">Portfolio deployed successfully!</div>
                 <div className="deployed-url">
                   {deployCountdown > 0 ? (
-                    <span style={{ color: "var(--text-muted)", fontSize: "0.88rem" }}>
-                      Generating secure HTTPS certificates... Your link will be ready in {deployCountdown}s
+                    <span style={{ color: "white", fontSize: "0.88rem" }}>
+                      Generating Live Link in {deployCountdown}s
                     </span>
                   ) : (
                     <>
@@ -519,7 +519,7 @@ export default function Home() {
               </button>
 
               {/* Demo button (mock mode) */}
-              <button
+              {/* <button
                 className="generate-btn"
                 onClick={() => { setFile(null); handleGenerate(); }}
                 style={{
@@ -533,7 +533,7 @@ export default function Home() {
                 id="demo-btn"
               >
                 👀 Try Demo (no upload needed)
-              </button>
+              </button> */}
             </>
           )}
 
@@ -587,7 +587,7 @@ export default function Home() {
                   onClick={handleConfirmAndGenerate}
                   style={{ flex: 2, padding: "14px", fontSize: "1rem", justifyContent: "center" }}
                 >
-                  Confirm & Continue Portfolio Generation ✨
+                  Confirm Portfolio Generation ✨
                 </button>
               </div>
             </div>
