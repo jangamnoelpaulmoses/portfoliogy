@@ -14,7 +14,7 @@ interface ProcessingStep {
 const INITIAL_STEPS: ProcessingStep[] = [
   { id: "extract", label: "Extracting text from resume...", icon: "📄", status: "pending" },
   { id: "parse", label: "Analyzing professional background...", icon: "🧠", status: "pending" },
-  { id: "rewrite", label: "Writing compelling marketing copy...", icon: "✍️", status: "pending" },
+  { id: "rewrite", label: "Adding projects and experience...", icon: "✍️", status: "pending" },
   { id: "theme", label: "Applying premium design theme...", icon: "🎨", status: "pending" },
   { id: "render", label: "Finalizing portfolio layout...", icon: "✨", status: "pending" },
 ];
